@@ -300,7 +300,11 @@ require(["plotly"], function(Plotly) {
             var trace_index_dif = host_solute_index_map[host_solute]+1;
             if (selected) {
               var traceDif = graphDif.data[trace_index_dif];
-              var y1 = D0*Math.exp(-Q/0.08617*1*0.05);
+              if (formula = "Fe"):
+                 var y1 = D0*Math.exp(-Q/0.08617*1*0.05);
+              else:
+                 var y1 = D0*Math.exp(-Q/0.08617*1*0.05);
+                
               var equal = (Math.abs(y1 - traceDif.y[1]) < Number.EPSILON);
               if (!equal) {
                 var yvalsDif = [];
