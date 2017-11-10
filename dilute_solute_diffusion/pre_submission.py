@@ -98,13 +98,14 @@ def run(mpfile, hosts=None):
         print 'add table for D0/Q data for {}'.format(mpid)
         if str(host)=='Fe':
             df_D0_Q = df[['Solute element name', 'Solute D0, paramagnetic [cm^2/s]', 'Solute Q, paramagnetic [eV]']]
+
         elif hdata[mpid]['Host crystal structure']=='HCP':
-            df_D0_Qb = df[['Solute element name', 'Solute D0 basal [cm^2/s]', 'Solute Q basal [eV]']]
-            df_D0_Qb = df_D0_Qb['Solute element name'].add_suffix("-b")
-            df_D0_Qb.columns = ['element', 'D0 [cm2/s]', 'Q [eV]']
-            df_D0_Qc = df[['Solute element name', 'Solute D0 c-axis [cm^2/s]', 'Solute Q c-axis [eV]']]
-            df_D0_Qc.columns = ['element', 'D0 [cm2/s]', 'Q [eV]']
-            df_D0_Q = df_D0_Qb.append(df_D0_Qc)
+           df_D0_Q = df[['Solute element name', 'Solute D0 c-axis [cm^2/s]', 'Solute Q c-axis [eV]']]
+           df_D0_Q.columns = ['element', 'D0 [cm2/s]', 'Q [eV]']
+           df_D0_Q_basal = df[['Solute element name', 'Solute D0 basal [cm^2/s]', 'Solute Q basal [eV]']]
+           df_D0_Q_basal.columns = ['element', 'D0 [cm2/s]', 'Q [eV]']
+           mpfile.add_data_table(mpid, df_D0_Q_basal, 'D0_Q_basal')
+
         else:
             df_D0_Q = df[['Solute element name', 'Solute D0 [cm^2/s]', 'Solute Q [eV]']]
         df_D0_Q.columns = ['element', 'D0 [cm2/s]', 'Q [eV]']
