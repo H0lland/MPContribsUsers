@@ -113,7 +113,8 @@
 requirejs(['main'], function() {
 require(["backbone", "backgrid", "backgrid-select-all", "backgrid-filter", "jquery.spin"], function() {
 require(["plotly"], function(Plotly) {
-
+  var msquareds = [0.97318225,0.96864964,0.96334225,0.95981209,0.95531076,0.95004009,0.944784,0.93779856,0.93006736,0.92217609,0.91431844,0.90497169,0.89548369,0.8836,0.87254281,0.86081284,0.84842521,0.83503044,0.82029249,0.80568576,0.78872161,0.77369616,0.75550864,0.73685056,0.71605444,0.69488896,0.67026969,0.64384576,0.61528336,0.58308496,0.54848836,0.51108201,0.46949904,0.42068196,0.36156169,0.30780304,0.24482704,0.16630084];
+  var temps = [250.56,271.44,292.32,313.2,334.08,354.96,375.84,396.72,417.6,438.48,459.36,480.24,501.12,522,542.88,563.76,584.64,605.52,626.4,647.28,668.16,689.04,709.92,730.8,751.68,772.56,793.44,814.32,835.2,856.08,876.96,897.84,918.72,939.6,960.48,981.36,1002.24,1023.12]; 
   var grids = [];
   var graphDif = document.getElementById('graphDif');
   var graphD0 = document.getElementById('graphD0');
@@ -300,24 +301,30 @@ require(["plotly"], function(Plotly) {
             var trace_index_dif = host_solute_index_map[host_solute]+1;
             if (selected) {
               var traceDif = graphDif.data[trace_index_dif];
-              if (formula = "Fe"){
                  var y1 = D0*Math.exp(-Q/0.08617*1*0.05);
-                }
-                 else{
-                 var y1 = D0*Math.exp(-Q/0.08617*1*0.05);
-                 } 
+             
               var equal = (Math.abs(y1 - traceDif.y[1]) < Number.EPSILON);
               if (!equal) {
-                var yvalsDif = [];
-                for (var j=0; j<80; j++) { yvalsDif.push(D0*Math.exp(-Q/0.08617*j*0.05)); }
+                var yvalsDif = []; 
+                 if (formula = 'Fe'){
+                    xvalsDif = [];
+                    for (var j=0; j < msquareds; j++){
+                        yvalsDif.push(D0*Math.exp(-Q*(1+.156*msquareds[j])/temps[j]));
+                        xvalsDif.push(temps[j]);
+                    }
+                    console.log(yvalsDif);
+                 }
+                 else{
+                    for (var j=0; j<80; j++) { yvalsDif.push(D0*Math.exp(-Q/0.08617*j*0.05)); }
+                 }
                 Plotly.deleteTraces(graphDif, trace_index_dif);
                 Plotly.addTraces(graphDif, {
                   x: xvalsDif, y: yvalsDif, mode: 'lines', name: host_solute
                 }, trace_index_dif);
               }
             } else {
-              if(isNaN(Q) && isNaN(D0) && !isNaN(graphDif.data[trace_index_dif]['y'][0])) {
-                Plotly.deleteTraces(graphDif, trace_index_dif);
+              if(isNaN(Q) && isNaN(D0) && !isNaN(graphDif.data[trace_index_dif]['y'][0])) { 
+                 Plotly.deleteTraces(graphDif, trace_index_dif);
                 Plotly.addTraces(graphDif, { x: xvalsDif, y: yvalsDifNaN }, trace_index_dif);
               }
             }
