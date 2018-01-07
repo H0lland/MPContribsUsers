@@ -122,8 +122,8 @@ require(["plotly"], function(Plotly) {
   var dummy_trace = { x: [], y: [], type: 'scatter' }
   var margins = { l: 50, r: 5, b: 50, t: 30 };
   var ranges = {{ ranges|safe }};
-  var xvalsDif = []; var yvalsDifNaN = [];
-  for (var j=0; j<80; j++) { xvalsDif.push(j*0.05); yvalsDifNaN.push(NaN); }
+  var xvalsDif = []; var yvalsDifNaN = []; 
+  for (var j=0; j<80; j++) { xvalsDif.push(j*0.05); yvalsDifNaN.push(NaN); } 
   var host_solute_index_map = {};
   var host_solute_counter = 0;
   var layoutDif = {
@@ -270,6 +270,7 @@ require(["plotly"], function(Plotly) {
         .then(function() {
             
           var formula = contributions[c]['formula'];
+          console.log(formula);
           var table = contributions[c]['table'];
           var rows = new Rows(table['rows'], {title: formula, cnum: c});
 
@@ -305,21 +306,26 @@ require(["plotly"], function(Plotly) {
              
               var equal = (Math.abs(y1 - traceDif.y[1]) < Number.EPSILON);
               if (!equal) {
-                var yvalsDif = []; 
-                 if (formula = 'Fe'){
-                    xvalsDif = [];
-                    for (var j=0; j < msquareds; j++){
-                        yvalsDif.push(D0*Math.exp(-Q*(1+.156*msquareds[j])/temps[j]));
-                        xvalsDif.push(temps[j]);
+                var yvalsDif = [];
+                var xvalsDif = [];
+                var k = .00008617;
+                 console.log(formula);
+                 if (formula == 'Fe'){ 
+                    console.log(D0);
+                    console.log(Q);
+                    for (var j=0; j < msquareds.length; j++){
+                        yvalsDif.push(D0*Math.exp(-Q*(1+.156*msquareds[j])/(k*temps[j])));
+                        xvalsDif.push(1000/temps[j]);
                     }
                     console.log(yvalsDif);
                  }
                  else{
-                    for (var j=0; j<80; j++) { yvalsDif.push(D0*Math.exp(-Q/0.08617*j*0.05)); }
+                    for (var j=0; j<80; j++) { yvalsDif.push(D0*Math.exp(-Q/.08617*j*0.05)); }
+                   for (var j=0; j<80; j++) { xvalsDif.push(j*0.05); } 
                  }
                 Plotly.deleteTraces(graphDif, trace_index_dif);
                 Plotly.addTraces(graphDif, {
-                  x: xvalsDif, y: yvalsDif, mode: 'lines', name: host_solute
+                  x: xvalsDif, y: yvalsDif, mode: 'linear', name: host_solute
                 }, trace_index_dif);
               }
             } else {
